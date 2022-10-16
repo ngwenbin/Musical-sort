@@ -1,3 +1,5 @@
+export const sortingAlgos = ["Select", "Bubble"];
+
 export class Sorter {
   dataset: Array<number>;
 
