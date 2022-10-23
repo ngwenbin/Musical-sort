@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useEffect } from "react";
 import { Button, Select } from "./components";
 import "./index.css";
