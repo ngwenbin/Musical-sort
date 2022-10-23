@@ -5,17 +5,14 @@ export const sortingAlgos = ["Select", "Bubble"];
 export class Sorter {
   dataset: Array<number>;
   stepCallback: (elementPos: number, updatedArr: Array<number>) => void;
-  arrayStore: Array<number>;
 
   constructor(
     inputData: Array<number>,
-    stepCallback: (step: number, updatedArr: Array<number>) => void,
-    arrayStore: Array<number>
+    stepCallback: (step: number, updatedArr: Array<number>) => void
   ) {
     inputData.length === 0 && this.#invalidDataSet();
-    this.dataset = inputData;
+    this.dataset = inputData.map((i) => i);
     this.stepCallback = stepCallback;
-    this.arrayStore = arrayStore;
   }
 
   #invalidDataSet = () => {
@@ -24,7 +21,7 @@ export class Sorter {
 
   update = (inputData: Array<number>) => {
     inputData.length === 0 && this.#invalidDataSet();
-    this.dataset = inputData;
+    this.dataset = inputData.map((i) => i);
   };
 
   bubbleSort = async () => {
@@ -36,7 +33,7 @@ export class Sorter {
         const curr = arr[i];
         const next = arr[i + 1];
 
-        await timeout(30);
+        await timeout(8);
         this.stepCallback(i, arr);
         if (curr > next) {
           arr[i + 1] = curr;

@@ -1,97 +1,83 @@
+import clsx from "clsx";
 import React, { useRef, useState } from "react";
 import { useEffect } from "react";
-import colors from "tailwindcss/colors";
+import { Button, Select } from "./components";
 import "./index.css";
 import { randomUniqueInts, Sorter, sortingAlgos } from "./utils";
 
 function App() {
-  const stateRef = useRef<Array<number>>();
-  const [currData, setCurrData] = useState(stateRef.current);
+  const [currData, setCurrData] = useState<Array<number>>([]);
   const [sortingAlgo, setSortingAlgo] = useState<string>();
   const [isSorting, setIsSorting] = useState<boolean>(false);
   const sorterRef = useRef<Sorter>();
-
-  useEffect(() => {
-    const randInts = randomUniqueInts(1000, 20);
-    stateRef.current = randInts;
-    setCurrData(stateRef.current);
-  }, []);
+  const currPointerRef = useRef<number>(0);
 
   const stepUICallback = (elementPos: number, updatedArr: Array<number>) => {
-    const currElement = document.getElementById(`bar_${elementPos}`);
-    let prevElement = document.getElementById(`bar_${elementPos - 1}`);
+    currPointerRef.current = elementPos;
+    const newArr = [...updatedArr];
+    setCurrData(newArr);
+  };
 
-    if (elementPos === 0) {
-      prevElement = document.getElementById("bar_19");
+  useEffect(() => {
+    const randInts = randomUniqueInts(3000, 60);
+    setCurrData(randInts);
+    if (!sorterRef.current) {
+      sorterRef.current = new Sorter(randInts, stepUICallback);
     }
-    currElement && (currElement.style.backgroundColor = `${colors.cyan[500]}`);
-    prevElement && (prevElement.style.backgroundColor = `${colors.slate[900]}`);
-    stateRef.current = updatedArr;
-    setCurrData(stateRef.current);
+  }, []);
+
+  const onSortClickHandler = async () => {
+    setIsSorting(true);
+    sorterRef?.current && (await sorterRef.current.bubbleSort());
+    setIsSorting(false);
   };
 
-  const onSortClickHandler = () => {
-    if (currData) {
-      if (!sorterRef.current) {
-        sorterRef.current = new Sorter(
-          currData,
-          stepUICallback,
-          stateRef.current!
-        );
-      }
-      setIsSorting(true);
-      sorterRef.current.bubbleSort();
-      setIsSorting(false);
-    }
+  const onGenerateClickHandler = async () => {
+    const randInts = randomUniqueInts(3000, 30);
+    currPointerRef.current = 0;
+    setCurrData(randInts);
+    sorterRef?.current && (await sorterRef.current.update(randInts));
   };
 
-  const onSelectSortingHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    e.target.value !== "Select" && setSortingAlgo(e.target.value);
-  };
+  const onSelectSortingHandler = (e: string) => setSortingAlgo(e);
 
   return (
     <div className="container p-5 mx-auto flex flex-col items-center gap-y-4">
-      <p className="text-3xl">Musical sort</p>
-      <div>
-        <label htmlFor="sortAlgo" className="mr-2 font-bold">
-          Select sorting algorithmn:
-        </label>
-        <select
-          name="sortAlgo"
-          id="sortAlgo"
-          onChange={(e) => onSelectSortingHandler(e)}
+      <p className="text-3xl py-4 font-semibold">Musical sort</p>
+      <div className="flex items-center gap-x-4">
+        <Select
+          label="Algorithm:"
+          labelOrient="hor"
+          options={sortingAlgos}
+          onChangeHandler={(e) => onSelectSortingHandler(e)}
+        />
+        <Button
+          onClick={() => onSortClickHandler()}
+          disabled={!Boolean(sortingAlgo) || isSorting}
         >
-          {sortingAlgos.map((item, key) => {
-            return (
-              <option key={key} value={item}>
-                {item}
-              </option>
-            );
-          })}
-        </select>
+          {isSorting ? "Sorting..." : "Sort"}
+        </Button>
+        <Button onClick={() => onGenerateClickHandler()} disabled={isSorting}>
+          Generate
+        </Button>
       </div>
-      <div className="flex gap-x-1 h-96 items-end justify-center bg-gray-100 rounded-md p-8">
-        {currData &&
-          currData.length > 0 &&
+      <div className=" mt-10 flex gap-x-1 items-end justify-center bg-blue-100 rounded-md px-6 pt-6 justify-self-end min-h-full">
+        {currData.length > 0 &&
           currData.map((item, key) => {
             return (
               <div
                 id={`bar_${key}`}
                 key={key}
-                className="bg-slate-900 w-4"
-                style={{ height: Math.floor(item / 10) }}
+                className={clsx(
+                  "w-2",
+                  currPointerRef.current === key
+                    ? "bg-cyan-500"
+                    : "bg-slate-900"
+                )}
+                style={{ height: Math.floor(item / 8) }}
               />
             );
           })}
-      </div>
-      <div>
-        <button
-          className="mt-4 px-5 py-2 bg-gray-900 text-white rounded-lg disabled:opacity-50"
-          onClick={() => onSortClickHandler()}
-          disabled={!Boolean(sortingAlgo) || isSorting}
-        >
-          {isSorting ? "Sorting..." : "Sort"}
-        </button>
       </div>
     </div>
   );
