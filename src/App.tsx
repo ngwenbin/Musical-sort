@@ -3,57 +3,72 @@ import { useRef, useState } from "react";
 import { useEffect } from "react";
 import { Button, Select } from "./components";
 import "./index.css";
-import { randomUniqueInts, Sorter, sortingAlgos } from "./utils";
+import { randomUniqueInts, Sorter, SortingAlgos, sortingAlgos } from "./utils";
+
+const DEFAULT_MAX_RANGE = 3000;
+const DEFAULT_MAX_COUNT = 120;
 
 function App() {
-  const [currData, setCurrData] = useState<Array<number>>([]);
-  const [sortingAlgo, setSortingAlgo] = useState<string>();
+  const [currData, setCurrData] = useState<Array<number>>(
+    randomUniqueInts(DEFAULT_MAX_RANGE, DEFAULT_MAX_COUNT)
+  );
+  const [selectedAlgo, setSelectedAlgo] = useState<SortingAlgos>();
   const [isSorting, setIsSorting] = useState<boolean>(false);
   const sorterRef = useRef<Sorter>();
-  const currPointerRef = useRef<number>(0);
+  const currPointerRef = useRef<Array<number>>([currData[0]]);
+  const dataStoreRef = useRef<Array<number>>([]);
 
-  const stepUICallback = (elementPos: number, updatedArr: Array<number>) => {
-    currPointerRef.current = elementPos;
-    const newArr = [...updatedArr];
+  const stepUICallback = (
+    selected: Array<number>,
+    updatedArr: Array<number>
+  ) => {
+    currPointerRef.current = [...selected];
+    const newArr = [
+      ...(updatedArr.length > 0 ? updatedArr : dataStoreRef.current),
+    ];
     setCurrData(newArr);
+    dataStoreRef.current = newArr;
   };
 
   useEffect(() => {
-    const randInts = randomUniqueInts(3000, 60);
-    setCurrData(randInts);
     if (!sorterRef.current) {
-      sorterRef.current = new Sorter(randInts, stepUICallback);
+      sorterRef.current = new Sorter(currData, stepUICallback);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSortClickHandler = async () => {
     setIsSorting(true);
-    sorterRef?.current && (await sorterRef.current.bubbleSort());
+    if (selectedAlgo && sorterRef?.current) {
+      dataStoreRef.current = currData;
+      await sorterRef.current.sort(selectedAlgo);
+    }
     setIsSorting(false);
   };
 
   const onGenerateClickHandler = async () => {
-    const randInts = randomUniqueInts(3000, 30);
-    currPointerRef.current = 0;
+    const randInts = randomUniqueInts(3000, 120);
+    currPointerRef.current = [0];
     setCurrData(randInts);
-    sorterRef?.current && (await sorterRef.current.update(randInts));
+    sorterRef?.current && sorterRef.current.update(randInts);
   };
 
-  const onSelectSortingHandler = (e: string) => setSortingAlgo(e);
+  const onSelectSortingHandler = (e: SortingAlgos) => setSelectedAlgo(e);
 
   return (
-    <div className="container p-5 mx-auto flex flex-col items-center gap-y-4">
+    <div className="container p-5 flex flex-col gap-y-4 items-center h-full min-h-full mx-auto">
       <p className="text-3xl py-4 font-semibold">Musical sort</p>
       <div className="flex items-center gap-x-4">
         <Select
           label="Algorithm:"
           labelOrient="hor"
+          labelClassName="text-gray-700"
           options={sortingAlgos}
-          onChangeHandler={(e) => onSelectSortingHandler(e)}
+          onChangeHandler={(e) => onSelectSortingHandler(e as SortingAlgos)}
         />
         <Button
           onClick={() => onSortClickHandler()}
-          disabled={!Boolean(sortingAlgo) || isSorting}
+          disabled={!selectedAlgo || selectedAlgo === "Select" || isSorting}
         >
           {isSorting ? "Sorting..." : "Sort"}
         </Button>
@@ -61,20 +76,22 @@ function App() {
           Generate
         </Button>
       </div>
-      <div className=" mt-10 flex gap-x-1 items-end justify-center bg-blue-100 rounded-md px-6 pt-6 justify-self-end min-h-full">
-        {currData.length > 0 &&
+      <div className=" mt-10 flex items-end bg-black rounded-lg px-6 pt-6 pb-0.5 flex-1 justify-center max-w-fit gap-[1px]">
+        {currData &&
+          currData.length > 0 &&
           currData.map((item, key) => {
             return (
               <div
                 id={`bar_${key}`}
                 key={key}
                 className={clsx(
-                  "w-2",
-                  currPointerRef.current === key
-                    ? "bg-cyan-500"
-                    : "bg-slate-900"
+                  "w-[5px]",
+                  // currPointerRef.current &&
+                  currPointerRef.current.includes(item)
+                    ? "bg-red-600"
+                    : "bg-white"
                 )}
-                style={{ height: Math.floor(item / 8) }}
+                style={{ height: Math.floor(item / 10) }}
               />
             );
           })}
