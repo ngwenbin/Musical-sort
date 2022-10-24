@@ -68,7 +68,7 @@ function App() {
         />
         <Button
           onClick={() => onSortClickHandler()}
-          disabled={!selectedAlgo || selectedAlgo === "Select" || isSorting}
+          disabled={!selectedAlgo || isSorting}
         >
           {isSorting ? "Sorting..." : "Sort"}
         </Button>

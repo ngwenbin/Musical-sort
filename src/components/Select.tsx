@@ -12,7 +12,7 @@ interface SelectProps extends React.HTMLAttributes<HTMLSelectElement> {
 
 const Select = ({
   options,
-  defaultOptIdx = 0,
+  defaultOptIdx,
   label,
   labelClassName,
   labelOrient = "ver",
@@ -36,12 +36,16 @@ const Select = ({
         id="select"
         name="select"
         className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-        defaultValue={options[defaultOptIdx]}
+        defaultValue={defaultOptIdx && options[defaultOptIdx]}
+        placeholder="Select"
         onChange={(e) => {
           onChangeHandler && onChangeHandler(e.target.value);
         }}
         {...props}
       >
+        <option value="" disabled selected hidden>
+          Select
+        </option>
         {options.map((item, key) => {
           return (
             <option key={key} value={item}>

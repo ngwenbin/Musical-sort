@@ -1,6 +1,6 @@
 import { timeout } from ".";
 
-export const sortingAlgos = ["Select", "Bubble", "Merge Sort"] as const;
+export const sortingAlgos = ["Bubble", "Merge Sort"] as const;
 export type SortingAlgos = typeof sortingAlgos[number];
 
 export class Sorter {
@@ -28,6 +28,7 @@ export class Sorter {
         break;
       }
       default:
+        break;
     }
   };
 
