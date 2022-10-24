@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React from "react";
 
 interface SelectProps extends React.HTMLAttributes<HTMLSelectElement> {
-  options: Array<string>;
+  options: Readonly<Array<string>>;
   defaultOptIdx?: number;
   label?: string;
   labelClassName?: string;
@@ -19,15 +19,13 @@ const Select = ({
   onChangeHandler,
   ...props
 }: SelectProps) => {
-  // const [selected, setSelected] = useState<string>();
-
   return (
     <div className={clsx(labelOrient === "hor" && "flex items-center gap-x-2")}>
       {label && (
         <label
           htmlFor="select"
           className={clsx(
-            "block text-sm font-medium text-gray-900",
+            "block text-sm font-normal text-gray-900",
             labelClassName
           )}
         >
@@ -40,7 +38,6 @@ const Select = ({
         className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         defaultValue={options[defaultOptIdx]}
         onChange={(e) => {
-          // setSelected(e.target.value);
           onChangeHandler && onChangeHandler(e.target.value);
         }}
         {...props}
