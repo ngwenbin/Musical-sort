@@ -7,6 +7,7 @@ import { randomUniqueInts, Sorter, SortingAlgos, sortingAlgos } from "./utils";
 
 const DEFAULT_MAX_RANGE = 3000;
 const DEFAULT_MAX_COUNT = 120;
+const DEFAULT_BAR_WIDTH = 5;
 
 function App() {
   const [currData, setCurrData] = useState<Array<number>>(
@@ -30,11 +31,26 @@ function App() {
     dataStoreRef.current = newArr;
   };
 
+  const windowSizeChangeHandler = () => {
+    const useable_screen_width = window.screen.width - 96;
+    let max_count = Math.ceil(useable_screen_width / (DEFAULT_BAR_WIDTH + 1));
+
+    max_count = max_count > DEFAULT_MAX_COUNT ? DEFAULT_MAX_COUNT : max_count;
+    setCurrData(randomUniqueInts(DEFAULT_MAX_RANGE, max_count));
+  };
+
   useEffect(() => {
     if (!sorterRef.current) {
       sorterRef.current = new Sorter(currData, stepUICallback);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("resize", windowSizeChangeHandler);
+    return () => {
+      window.removeEventListener("resize", windowSizeChangeHandler);
+    };
   }, []);
 
   const onSortClickHandler = async () => {
@@ -56,9 +72,9 @@ function App() {
   const onSelectSortingHandler = (e: SortingAlgos) => setSelectedAlgo(e);
 
   return (
-    <div className="container p-5 flex flex-col gap-y-4 items-center h-full min-h-full mx-auto">
+    <div className="container flex flex-col gap-y-4 items-center h-full min-h-full mx-auto">
       <p className="text-3xl py-4 font-semibold">Musical sort</p>
-      <div className="flex items-center gap-x-4">
+      <div className="flex items-start gap-x-4 gap-y-2 flex-col md:flex-row md:items-center">
         <Select
           label="Algorithm:"
           labelOrient="hor"
@@ -66,15 +82,17 @@ function App() {
           options={sortingAlgos}
           onChangeHandler={(e) => onSelectSortingHandler(e as SortingAlgos)}
         />
-        <Button
-          onClick={() => onSortClickHandler()}
-          disabled={!selectedAlgo || isSorting}
-        >
-          {isSorting ? "Sorting..." : "Sort"}
-        </Button>
-        <Button onClick={() => onGenerateClickHandler()} disabled={isSorting}>
-          Generate
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => onSortClickHandler()}
+            disabled={!selectedAlgo || isSorting}
+          >
+            {isSorting ? "Sorting..." : "Sort"}
+          </Button>
+          <Button onClick={() => onGenerateClickHandler()} disabled={isSorting}>
+            Generate
+          </Button>
+        </div>
       </div>
       <div className=" mt-10 flex items-end bg-black rounded-lg px-6 pt-6 pb-0.5 flex-1 justify-center max-w-fit gap-[1px]">
         {currData &&

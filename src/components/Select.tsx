@@ -36,14 +36,14 @@ const Select = ({
         id="select"
         name="select"
         className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-        defaultValue={defaultOptIdx && options[defaultOptIdx]}
+        defaultValue={defaultOptIdx ? options[defaultOptIdx] : "0"}
         placeholder="Select"
         onChange={(e) => {
           onChangeHandler && onChangeHandler(e.target.value);
         }}
         {...props}
       >
-        <option value="" disabled selected hidden>
+        <option value="0" disabled hidden>
           Select
         </option>
         {options.map((item, key) => {
