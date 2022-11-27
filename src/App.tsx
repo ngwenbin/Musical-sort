@@ -16,10 +16,10 @@ function App() {
   const [selectedAlgo, setSelectedAlgo] = useState<SortingAlgos>();
   const [isSorting, setIsSorting] = useState<boolean>(false);
   const sorterRef = useRef<Sorter>();
-  const currPointerRef = useRef<Array<number>>([currData[0]]);
-  const dataStoreRef = useRef<Array<number>>([]);
+  const currPointerRef = useRef<Array<number>>([currData[0]]); // To track which data bar(s) should be highlighted
+  const dataStoreRef = useRef<Array<number>>([]); // Stores the current dataset
 
-  const stepUICallback = (
+  const updateUiCallback = (
     selected: Array<number>,
     updatedArr: Array<number>
   ) => {
@@ -43,7 +43,7 @@ function App() {
 
   useEffect(() => {
     if (!sorterRef.current) {
-      sorterRef.current = new Sorter(currData, stepUICallback);
+      sorterRef.current = new Sorter(currData, updateUiCallback);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -64,7 +64,7 @@ function App() {
     setIsSorting(false);
   };
 
-  const onGenerateClickHandler = async () => {
+  const onGenerateClickHandler = () => {
     const randInts = windowSizeChangeHandler();
     currPointerRef.current = [0];
     sorterRef?.current && sorterRef.current.update(randInts);
