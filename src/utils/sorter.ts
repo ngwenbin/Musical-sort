@@ -7,6 +7,9 @@ const DELAY = 5; // in ms
 
 export class Sorter {
   dataset: Array<number>;
+  /**
+   * Calls the exposed UI callback function for UI updates
+   */
   #stepCallback: (selected: Array<number>, updatedArr: Array<number>) => void;
 
   constructor(
@@ -18,6 +21,10 @@ export class Sorter {
     this.#stepCallback = stepCallback;
   }
 
+  /**
+   * Public method to start sorting process
+   * @param method String literal for sorting algo selection
+   */
   sort = async (method: SortingAlgos) => {
     switch (method) {
       case "Bubble": {
@@ -38,11 +45,18 @@ export class Sorter {
     throw Error("Invalid data set.");
   };
 
+  /**
+   * Public method to update data variable in Sorter class
+   * @param inputData Array of numbers
+   */
   update = (inputData: Array<number>) => {
     inputData.length === 0 && this.#invalidDataSet();
     this.dataset = inputData.map((i) => i);
   };
 
+  /**
+   * Bubble sort algorithmn
+   */
   #bubbleSort = async () => {
     let isSorted = false;
     let arr = this.dataset;
@@ -64,6 +78,9 @@ export class Sorter {
     return arr;
   };
 
+  /**
+   * Helper for mergeSort
+   */
   #mergeHelper = async (
     left: Array<number>,
     right: Array<number>
@@ -83,6 +100,9 @@ export class Sorter {
     return [...sortedArr, ...left, ...right];
   };
 
+  /**
+   * Mergesort algorithmn
+   */
   #mergeSort = async (
     arr: Array<number>,
     leftRemainder: Array<number> = [],
