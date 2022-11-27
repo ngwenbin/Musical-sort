@@ -3,6 +3,8 @@ import { timeout } from ".";
 export const sortingAlgos = ["Bubble", "Merge Sort"] as const;
 export type SortingAlgos = typeof sortingAlgos[number];
 
+const DELAY = 5; // in ms
+
 export class Sorter {
   dataset: Array<number>;
   #stepCallback: (selected: Array<number>, updatedArr: Array<number>) => void;
@@ -50,7 +52,7 @@ export class Sorter {
         const curr = arr[i];
         const next = arr[i + 1];
 
-        await timeout(2);
+        await timeout(DELAY);
         this.#stepCallback([arr[i]], arr);
         if (curr > next) {
           arr[i + 1] = curr;
@@ -75,24 +77,41 @@ export class Sorter {
         const rightShifted = right.shift();
         rightShifted && sortedArr.push(rightShifted);
       }
-      await timeout(2);
-      this.#stepCallback([...left, ...right], []);
+      await timeout(DELAY);
+      this.#stepCallback([...left, ...right], []); // Update UI pointer
     }
-
     return [...sortedArr, ...left, ...right];
   };
 
-  #mergeSort = async (arr: Array<number>): Promise<Array<number>> => {
+  #mergeSort = async (
+    arr: Array<number>,
+    leftRemainder: Array<number> = [],
+    rightRemainder: Array<number> = []
+  ): Promise<Array<number>> => {
     if (arr.length <= 1) {
-      this.#stepCallback([...arr], []);
+      this.#stepCallback([...arr], []); // Update UI pointer
       return arr;
     }
+    const mid = Math.ceil(arr.length / 2); // Get mid of array
+    const leftElements = arr.slice(0, mid);
+    const rightElements = arr.slice(mid);
 
-    let mid = Math.ceil(arr.length / 2); // Get mid of array
-    let left = await this.#mergeSort(arr.slice(0, mid));
-    let right = await this.#mergeSort(arr.slice(mid));
-    let merged = await this.#mergeHelper(left, right);
-    this.#stepCallback([], [...new Set([...merged, ...this.dataset])]);
+    // Stack right interior nodes with previous level's remainder nodes and right subtree if any.
+    const left = await this.#mergeSort(leftElements, leftRemainder, [
+      ...rightElements,
+      ...rightRemainder,
+    ]);
+
+    // Stack left interior nodes with previous level's remainder nodes and left subtree if any.
+    const right = await this.#mergeSort(
+      rightElements,
+      [...leftRemainder, ...left],
+      rightRemainder
+    );
+
+    const merged = await this.#mergeHelper(left, right);
+    this.#stepCallback([], [...leftRemainder, ...merged, ...rightRemainder]); // Update displayed data
+
     return merged;
   };
 }

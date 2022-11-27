@@ -31,12 +31,14 @@ function App() {
     dataStoreRef.current = newArr;
   };
 
-  const windowSizeChangeHandler = () => {
+  const windowSizeChangeHandler = (): Array<number> => {
     const useable_screen_width = window.screen.width - 96;
     let max_count = Math.ceil(useable_screen_width / (DEFAULT_BAR_WIDTH + 1));
 
     max_count = max_count > DEFAULT_MAX_COUNT ? DEFAULT_MAX_COUNT : max_count;
-    setCurrData(randomUniqueInts(DEFAULT_MAX_RANGE, max_count));
+    const randInts = randomUniqueInts(DEFAULT_MAX_RANGE, max_count);
+    setCurrData(randInts);
+    return randInts;
   };
 
   useEffect(() => {
@@ -63,9 +65,8 @@ function App() {
   };
 
   const onGenerateClickHandler = async () => {
-    const randInts = randomUniqueInts(3000, 120);
+    const randInts = windowSizeChangeHandler();
     currPointerRef.current = [0];
-    setCurrData(randInts);
     sorterRef?.current && sorterRef.current.update(randInts);
   };
 
