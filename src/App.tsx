@@ -13,7 +13,7 @@ function App() {
   const [currData, setCurrData] = useState<Array<number>>(
     randomUniqueInts(DEFAULT_MAX_RANGE, DEFAULT_MAX_COUNT)
   );
-  const [selectedAlgo, setSelectedAlgo] = useState<SortingAlgos>();
+  const [selectedAlgo, setSelectedAlgo] = useState<SortingAlgos>("Bubble");
   const [isSorting, setIsSorting] = useState<boolean>(false);
   const sorterRef = useRef<Sorter>();
   const currPointerRef = useRef<Array<number>>([currData[0]]); // To track which data bar(s) should be highlighted
@@ -78,6 +78,7 @@ function App() {
           labelOrient="hor"
           labelClassName="text-gray-700"
           options={sortingAlgos}
+          defaultOptIdx={sortingAlgos.indexOf(selectedAlgo)}
           onChangeHandler={(e) => onSelectSortingHandler(e as SortingAlgos)}
         />
         <div className="flex gap-2">

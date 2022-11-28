@@ -36,7 +36,9 @@ const Select = ({
         id="select"
         name="select"
         className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-        defaultValue={defaultOptIdx ? options[defaultOptIdx] : "0"}
+        defaultValue={
+          defaultOptIdx !== undefined ? options[defaultOptIdx] : "0"
+        }
         placeholder="Select"
         onChange={(e) => {
           onChangeHandler && onChangeHandler(e.target.value);
