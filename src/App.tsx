@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import { useRef, useState } from "react";
 import { useEffect } from "react";
-import { Button, Select } from "./components";
+import { BarView, Button, Select } from "./components";
 import { randomUniqueInts, Sorter, SortingAlgos, sortingAlgos } from "./utils";
 import {
   DEFAULT_MAX_COUNT,
@@ -32,6 +31,10 @@ function App() {
     dataStoreRef.current = newArr;
   };
 
+  if (!sorterRef.current) {
+    sorterRef.current = new Sorter(currData, updateUiCallback);
+  }
+
   const windowSizeChangeHandler = (): Array<number> => {
     const useable_screen_width = window.screen.width - 96;
     let max_count = Math.ceil(useable_screen_width / (DEFAULT_BAR_WIDTH + 1));
@@ -41,13 +44,6 @@ function App() {
     setCurrData(randInts);
     return randInts;
   };
-
-  useEffect(() => {
-    if (!sorterRef.current) {
-      sorterRef.current = new Sorter(currData, updateUiCallback);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     window.addEventListener("resize", windowSizeChangeHandler);
@@ -96,26 +92,7 @@ function App() {
           </Button>
         </div>
       </div>
-      <div className=" mt-10 flex items-end bg-black rounded-lg px-6 pt-6 pb-0.5 flex-1 justify-center max-w-fit gap-[1px]">
-        {currData &&
-          currData.length > 0 &&
-          currData.map((item, key) => {
-            return (
-              <div
-                id={`bar_${key}`}
-                key={key}
-                className={clsx(
-                  "w-[5px]",
-                  // currPointerRef.current &&
-                  currPointerRef.current.includes(item)
-                    ? "bg-red-600"
-                    : "bg-white"
-                )}
-                style={{ height: Math.floor(item / 10) }}
-              />
-            );
-          })}
-      </div>
+      <BarView data={currData} pointerStack={currPointerRef.current} />
     </div>
   );
 }
