@@ -1,4 +1,4 @@
-import { timeout } from ".";
+import { timeout, SoundPlayer } from ".";
 
 export const sortingAlgos = ["Bubble", "Merge Sort"] as const;
 export type SortingAlgos = typeof sortingAlgos[number];
@@ -11,6 +11,7 @@ export class Sorter {
    * Calls the exposed UI callback function for UI updates
    */
   #stepCallback: (selected: Array<number>, updatedArr: Array<number>) => void;
+  #soundPlayer: SoundPlayer;
 
   constructor(
     inputData: Array<number>,
@@ -19,6 +20,7 @@ export class Sorter {
     inputData.length === 0 && this.#invalidDataSet();
     this.dataset = inputData.map((i) => i);
     this.#stepCallback = stepCallback;
+    this.#soundPlayer = new SoundPlayer();
   }
 
   /**
@@ -68,6 +70,7 @@ export class Sorter {
 
         await timeout(DELAY);
         this.#stepCallback([arr[i]], arr);
+        this.#soundPlayer.playTone(arr[i]);
         if (curr > next) {
           arr[i + 1] = curr;
           arr[i] = next;
@@ -89,10 +92,16 @@ export class Sorter {
     while (left.length && right.length) {
       if (left[0] < right[0]) {
         const leftShifted = left.shift();
-        leftShifted && sortedArr.push(leftShifted);
+        if (leftShifted) {
+          sortedArr.push(leftShifted);
+          this.#soundPlayer.playTone(leftShifted);
+        }
       } else {
         const rightShifted = right.shift();
-        rightShifted && sortedArr.push(rightShifted);
+        if (rightShifted) {
+          sortedArr.push(rightShifted);
+          this.#soundPlayer.playTone(rightShifted);
+        }
       }
       await timeout(DELAY);
       this.#stepCallback([...left, ...right], []); // Update UI pointer
