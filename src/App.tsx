@@ -2,12 +2,13 @@ import clsx from "clsx";
 import { useRef, useState } from "react";
 import { useEffect } from "react";
 import { Button, Select } from "./components";
-import "./index.css";
 import { randomUniqueInts, Sorter, SortingAlgos, sortingAlgos } from "./utils";
-
-const DEFAULT_MAX_RANGE = 3000;
-const DEFAULT_MAX_COUNT = 120;
-const DEFAULT_BAR_WIDTH = 5;
+import {
+  DEFAULT_MAX_COUNT,
+  DEFAULT_MAX_RANGE,
+  DEFAULT_BAR_WIDTH,
+} from "./constants";
+import "./index.css";
 
 function App() {
   const [currData, setCurrData] = useState<Array<number>>(
