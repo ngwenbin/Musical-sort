@@ -8,6 +8,7 @@ interface SelectProps extends React.HTMLAttributes<HTMLSelectElement> {
   labelClassName?: string;
   labelOrient?: "ver" | "hor";
   onChangeHandler?: (value: string) => void;
+  disabled?: boolean;
 }
 
 const Select = ({
@@ -17,6 +18,7 @@ const Select = ({
   labelClassName,
   labelOrient = "ver",
   onChangeHandler,
+  disabled,
   ...props
 }: SelectProps) => {
   return (
@@ -43,6 +45,7 @@ const Select = ({
         onChange={(e) => {
           onChangeHandler && onChangeHandler(e.target.value);
         }}
+        disabled={disabled}
         {...props}
       >
         <option value="0" disabled hidden>

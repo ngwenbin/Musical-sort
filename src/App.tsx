@@ -8,6 +8,7 @@ import {
   DEFAULT_BAR_WIDTH,
 } from "./constants";
 import "./index.css";
+import clsx from "clsx";
 
 function App() {
   const [currData, setCurrData] = useState<Array<number>>(
@@ -15,6 +16,7 @@ function App() {
   );
   const [selectedAlgo, setSelectedAlgo] = useState<SortingAlgos>("Bubble");
   const [isSorting, setIsSorting] = useState<boolean>(false);
+  const [isSoundOn, setIsSoundOn] = useState<boolean>(false);
   const sorterRef = useRef<Sorter>();
   const currPointerRef = useRef<Array<number>>([currData[0]]); // To track which data bar(s) should be highlighted
   const dataStoreRef = useRef<Array<number>>([]); // Stores the current dataset
@@ -68,7 +70,10 @@ function App() {
   };
 
   const onSelectSortingHandler = (e: SortingAlgos) => setSelectedAlgo(e);
-
+  const onSoundToggleHandler = () => {
+    setIsSoundOn((val) => !val);
+    sorterRef.current?.toggleSound();
+  };
   return (
     <div className="container flex flex-col gap-y-4 items-center h-full min-h-full mx-auto">
       <p className="text-3xl py-4 font-semibold">Musical sort</p>
@@ -80,6 +85,7 @@ function App() {
           options={sortingAlgos}
           defaultOptIdx={sortingAlgos.indexOf(selectedAlgo)}
           onChangeHandler={(e) => onSelectSortingHandler(e as SortingAlgos)}
+          disabled={isSorting}
         />
         <div className="flex gap-2">
           <Button
@@ -92,6 +98,16 @@ function App() {
             Generate
           </Button>
         </div>
+        <Button
+          onClick={() => onSoundToggleHandler()}
+          buttonClassName={clsx(
+            isSoundOn
+              ? "text-green-700 bg-green-100 hover:bg-green-200 focus:ring-green-500"
+              : "text-red-700 bg-red-100 hover:bg-red-200 focus:ring-red-500"
+          )}
+        >
+          Sound {isSoundOn ? "ON" : "OFF"}
+        </Button>
       </div>
       <BarView data={currData} pointerStack={currPointerRef.current} />
     </div>

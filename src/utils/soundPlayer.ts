@@ -1,20 +1,27 @@
 export class SoundPlayer {
   #audioContext: AudioContext;
   #duration: number;
+  #isSoundOn: boolean;
 
   constructor(duration?: number) {
     this.#audioContext = new window.AudioContext();
     this.#duration = duration ?? 0.01;
+    this.#isSoundOn = false;
   }
 
-  playTone = (freq: number) => {
-    const oscillator = this.#audioContext.createOscillator();
+  toggleSound = () => {
+    this.#isSoundOn = !this.#isSoundOn;
+  };
 
-    oscillator.type = "square";
-    oscillator.frequency.value = freq * 0.3;
-    oscillator.connect(this.#audioContext.destination);
-    oscillator.start(this.#audioContext.currentTime);
-    oscillator.stop(this.#audioContext.currentTime + this.#duration);
-    return true;
+  playTone = (freq: number) => {
+    if (this.#isSoundOn) {
+      const oscillator = this.#audioContext.createOscillator();
+
+      oscillator.type = "square";
+      oscillator.frequency.value = freq * 0.3;
+      oscillator.connect(this.#audioContext.destination);
+      oscillator.start(this.#audioContext.currentTime);
+      oscillator.stop(this.#audioContext.currentTime + this.#duration);
+    }
   };
 }

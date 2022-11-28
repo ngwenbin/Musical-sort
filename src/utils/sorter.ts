@@ -43,6 +43,10 @@ export class Sorter {
     }
   };
 
+  toggleSound = () => {
+    this.#soundPlayer.toggleSound();
+  };
+
   #invalidDataSet = () => {
     throw Error("Invalid data set.");
   };
