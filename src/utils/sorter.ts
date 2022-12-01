@@ -3,7 +3,7 @@ import { timeout, SoundPlayer } from ".";
 export const sortingAlgos = ["Bubble", "Merge Sort"] as const;
 export type SortingAlgos = typeof sortingAlgos[number];
 
-const DELAY = 5; // in ms
+const DELAY = 2; // in ms
 
 export class Sorter {
   dataset: Array<number>;
@@ -64,24 +64,24 @@ export class Sorter {
    * Bubble sort algorithmn
    */
   #bubbleSort = async () => {
-    let isSorted = false;
+    let swapped = true;
     let arr = this.dataset;
-    while (!isSorted) {
-      isSorted = true;
-      for (let i = 0; i < arr.length; i++) {
+    do {
+      swapped = false;
+      for (let i = 0; i < arr.length - 1; i++) {
         const curr = arr[i];
         const next = arr[i + 1];
-
-        await timeout(DELAY);
-        this.#stepCallback([arr[i]], arr);
-        this.#soundPlayer.playTone(arr[i]);
         if (curr > next) {
           arr[i + 1] = curr;
           arr[i] = next;
-          isSorted = false;
+
+          await timeout(DELAY);
+          this.#stepCallback([curr], arr);
+          this.#soundPlayer.playTone(curr);
+          swapped = true;
         }
       }
-    }
+    } while (swapped);
     return arr;
   };
 
