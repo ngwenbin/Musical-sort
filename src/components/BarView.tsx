@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import { DEFAULT_MIN_RANGE } from "../constants";
 
 interface BarViewProps {
   data: Array<number>;
@@ -20,7 +21,7 @@ const BarView = ({ data, pointerStack }: BarViewProps) => {
                 "w-[5px]",
                 pointerStack.includes(item) ? "bg-red-600" : "bg-white"
               )}
-              style={{ height: Math.floor(item / 10) }}
+              style={{ height: Math.floor((item - DEFAULT_MIN_RANGE + 1) / 1) }}
             />
           );
         })}

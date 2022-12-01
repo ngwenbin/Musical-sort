@@ -6,13 +6,14 @@ import {
   DEFAULT_MAX_COUNT,
   DEFAULT_MAX_RANGE,
   DEFAULT_BAR_WIDTH,
+  DEFAULT_MIN_RANGE,
 } from "./constants";
 import "./index.css";
 import clsx from "clsx";
 
 function App() {
   const [currData, setCurrData] = useState<Array<number>>(
-    randomUniqueInts(DEFAULT_MAX_RANGE, DEFAULT_MAX_COUNT)
+    randomUniqueInts(DEFAULT_MAX_COUNT, DEFAULT_MAX_RANGE, DEFAULT_MIN_RANGE)
   );
   const [selectedAlgo, setSelectedAlgo] = useState<SortingAlgos>("Bubble");
   const [isSorting, setIsSorting] = useState<boolean>(false);
@@ -42,7 +43,11 @@ function App() {
     let max_count = Math.ceil(useable_screen_width / (DEFAULT_BAR_WIDTH + 1));
 
     max_count = max_count > DEFAULT_MAX_COUNT ? DEFAULT_MAX_COUNT : max_count;
-    const randInts = randomUniqueInts(DEFAULT_MAX_RANGE, max_count);
+    const randInts = randomUniqueInts(
+      max_count,
+      DEFAULT_MAX_RANGE,
+      DEFAULT_MIN_RANGE
+    );
     setCurrData(randInts);
     return randInts;
   };
@@ -102,8 +107,8 @@ function App() {
           onClick={() => onSoundToggleHandler()}
           buttonClassName={clsx(
             isSoundOn
-              ? "text-green-700 bg-green-100 hover:bg-green-200 focus:ring-green-500"
-              : "text-red-700 bg-red-100 hover:bg-red-200 focus:ring-red-500"
+              ? "!text-green-700 !bg-green-100 !hover:bg-green-200 !focus:ring-green-500"
+              : "!text-red-700 !bg-red-100 !hover:bg-red-200 !focus:ring-red-500"
           )}
         >
           Sound {isSoundOn ? "ON" : "OFF"}

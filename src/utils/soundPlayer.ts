@@ -17,8 +17,8 @@ export class SoundPlayer {
     if (this.#isSoundOn) {
       const oscillator = this.#audioContext.createOscillator();
 
-      oscillator.type = "square";
-      oscillator.frequency.value = freq * 0.3;
+      oscillator.type = "triangle";
+      oscillator.frequency.value = freq;
       oscillator.connect(this.#audioContext.destination);
       oscillator.start(this.#audioContext.currentTime);
       oscillator.stop(this.#audioContext.currentTime + this.#duration);
