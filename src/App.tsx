@@ -80,41 +80,46 @@ function App() {
     sorterRef.current?.toggleSound();
   };
   return (
-    <div className="container flex flex-col gap-y-4 items-center h-full min-h-full mx-auto">
-      <p className="text-3xl py-4 font-semibold">Musical sort</p>
-      <div className="flex items-start gap-x-4 gap-y-2 flex-col md:flex-row md:items-center">
-        <Select
-          label="Algorithm:"
-          labelOrient="hor"
-          labelClassName="text-gray-700"
-          options={sortingAlgos}
-          defaultOptIdx={sortingAlgos.indexOf(selectedAlgo)}
-          onChangeHandler={(e) => onSelectSortingHandler(e as SortingAlgos)}
-          disabled={isSorting}
-        />
-        <div className="flex gap-2">
+    <div className="container flex flex-col gap-y-4 items-center h-full min-h-screen justify-center mx-auto">
+      <div className="flex flex-col items-center">
+        <p className="text-3xl py-4 font-semibold">Musical sort</p>
+        <div className="flex items-start gap-x-4 gap-y-2 flex-col md:flex-row md:items-center">
+          <Select
+            label="Algorithm:"
+            labelOrient="hor"
+            labelClassName="text-gray-700"
+            options={sortingAlgos}
+            defaultOptIdx={sortingAlgos.indexOf(selectedAlgo)}
+            onChangeHandler={(e) => onSelectSortingHandler(e as SortingAlgos)}
+            disabled={isSorting}
+          />
+          <div className="flex gap-2">
+            <Button
+              onClick={() => onSortClickHandler()}
+              disabled={!selectedAlgo || isSorting}
+            >
+              {isSorting ? "Sorting..." : "Sort"}
+            </Button>
+            <Button
+              onClick={() => onGenerateClickHandler()}
+              disabled={isSorting}
+            >
+              Generate
+            </Button>
+          </div>
           <Button
-            onClick={() => onSortClickHandler()}
-            disabled={!selectedAlgo || isSorting}
+            onClick={() => onSoundToggleHandler()}
+            buttonClassName={clsx(
+              isSoundOn
+                ? "!text-green-700 !bg-green-100 !hover:bg-green-200 !focus:ring-green-500"
+                : "!text-red-700 !bg-red-100 !hover:bg-red-200 !focus:ring-red-500"
+            )}
           >
-            {isSorting ? "Sorting..." : "Sort"}
-          </Button>
-          <Button onClick={() => onGenerateClickHandler()} disabled={isSorting}>
-            Generate
+            Sound {isSoundOn ? "ON" : "OFF"}
           </Button>
         </div>
-        <Button
-          onClick={() => onSoundToggleHandler()}
-          buttonClassName={clsx(
-            isSoundOn
-              ? "!text-green-700 !bg-green-100 !hover:bg-green-200 !focus:ring-green-500"
-              : "!text-red-700 !bg-red-100 !hover:bg-red-200 !focus:ring-red-500"
-          )}
-        >
-          Sound {isSoundOn ? "ON" : "OFF"}
-        </Button>
+        <BarView data={currData} pointerStack={currPointerRef.current} />
       </div>
-      <BarView data={currData} pointerStack={currPointerRef.current} />
     </div>
   );
 }
